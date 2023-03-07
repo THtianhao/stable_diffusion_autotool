@@ -7,8 +7,8 @@ class TaskBean:
         self.human_model_dir_flag = ""
         self.style_model = ""
         self.base_model_flag = ""
-        self.taskMerge: TaskMerge = TaskMerge()
-        self.taskTxt2Img: TaskTxt2Img = TaskTxt2Img()
+        self.task_merge: TaskMerge = TaskMerge()
+        self.task_txt_img: TaskTxt2Img = TaskTxt2Img()
 
 class TaskMerge:
     def __init__(self):

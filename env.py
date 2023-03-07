@@ -19,16 +19,13 @@ cfgPath = None
 root = None
 
 if isMac:
-    root = "/AutoTool"
-    cfgPath = "/config"
-    ocrPath = "/ocr/"
-    carPath = "/car/"
-    driverPath = "/driver/"
-globalRootPath = f'{getSavePath()}{root}'
-globalCfgPath = f'{getSavePath()}{root}{cfgPath}'
+    root = "AutoTool"
+    cfgPath = "config"
+globalRootPath = os.path.join(getSavePath(), root)
+globalCfgPath = os.path.join(globalRootPath, cfgPath)
 
 if not os.path.exists(globalCfgPath):
     os.makedirs(globalCfgPath)
 
 def getConfigPath():
-    return r'%scfg.json' % globalCfgPath
+    return os.path.join(globalCfgPath, "cfg.json")

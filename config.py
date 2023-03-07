@@ -3,40 +3,29 @@ import json
 import os
 
 import env
+from bean.config_bean import ConfigBean
 
-config: json = {}
-host_flag = "host"
-port_flag = "port"
-tasks_flag = "task"
-def save_config(self):
-    host = self.host.text()
-    port = self.port.text()
-    task = self.taskPath.text()
-    if host != '':
-        self.write_config(self.host_flag, host)
-    if port != '':
-        self.write_config(self.port_flag, port)
-    if task != '':
-        self.write_config(self.tasks_flag, task)
-
-def write_config(key, value):
+def write_config(config):
     try:
-        if config.get(key) is None or config[key] != value or len(config[key]) != 0:
-            config[key] = value
-            with open(env.getConfigPath(), 'w') as writeFile:
-                json.dump(config, writeFile)
+        # if config.get(key) is None or config[key] != value or len(config[key]) != 0:
+        #     config[key] = value
+        with open(env.getConfigPath(), 'w') as writeFile:
+            json.dump(config, writeFile)
     except Exception as e:
         print("json保存错误!" + str(e))
 
-
-def read_config():
+def read_config() -> ConfigBean:
     if not os.path.exists(env.getConfigPath()):
         with codecs.open(env.getConfigPath(), 'a+', encoding='utf-8') as f:
             f.write("{}")
-            return
+            return ''
     try:
         with open(env.getConfigPath()) as f:
             config = json.load(f)
-
+            bean = ConfigBean()
+            bean.host = config.get('host')
+            bean.port = config.get('port')
+            bean.task_path = config.get('task_path')
+            return bean
     except Exception as e:
         print(e)

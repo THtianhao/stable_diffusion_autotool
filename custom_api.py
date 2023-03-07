@@ -4,11 +4,10 @@ import requests
 
 import env
 
-
 class CustomAPI:
 
-    def __init__(self):
-        self.baseUrl = f"http://{env.host}:{env.port}/sdapi/v1"
+    def __init__(self, host, port):
+        self.baseUrl = f"http://{host}:{port}/sdapi/v1"
 
     def delete_model(self):
         url = f"{self.baseUrl}/delete_models"
@@ -19,18 +18,18 @@ class CustomAPI:
         return response
 
     def check_point_merge(self,
-                         primary_model_name="",
-                         secondary_model_name="",
-                         tertiary_model_name="",
-                         interp_method="",
-                         multiplier=0,
-                         save_as_half=False,
-                         custom_name="",
-                         checkpoint_format="",
-                         config_source=0,
-                         bake_in_vae=None,
-                         discard_weights=""
-                         ):
+                          primary_model_name="",
+                          secondary_model_name="",
+                          tertiary_model_name="",
+                          interp_method="",
+                          multiplier=0,
+                          save_as_half=False,
+                          custom_name="",
+                          checkpoint_format="",
+                          config_source=0,
+                          bake_in_vae=None,
+                          discard_weights=""
+                          ):
         url = f"{self.baseUrl}/checkpoint-merger"
         payload = {
             "id_task": int(time.time()),
