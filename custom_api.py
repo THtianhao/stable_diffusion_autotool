@@ -10,6 +10,14 @@ class CustomAPI:
     def __init__(self):
         self.baseUrl = f"http://{env.host}:{env.port}/sdapi/v1"
 
+    def deleteModel(self):
+        url = f"{self.baseUrl}/delete_models"
+        response = requests.Session().get(url=url)
+        if response.status_code != 200:
+            pass
+        print(response)
+        return response
+
     def checkpointMerger(self,
                          primary_model_name="",
                          secondary_model_name="",

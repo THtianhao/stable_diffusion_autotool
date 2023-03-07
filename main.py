@@ -1,4 +1,5 @@
 import os
+import sys
 
 from webuiapi import webuiapi
 from datetime import datetime
@@ -20,8 +21,8 @@ def generateImage(keyWord, model, primaryModelCut, secondaryModelCut):
         seed=-1,
         styles=["anime"],
         cfg_scale=7,
-        sampler_index='DPM++ SDE Karras',
-        steps=33,
+        sampler_index='DPM++ 2S a Karras',
+        steps=22,
         batch_size=4
         # enable_hr=True,
         # hr_scale=2,
@@ -31,7 +32,7 @@ def generateImage(keyWord, model, primaryModelCut, secondaryModelCut):
         # hr_resize_y=1024,
         # denoising_strength=0.4,
     )
-    style_dir = f"{auto_dir}/{secondaryModelCut}"
+    style_dir = f"{auto_dir}/{secondaryModelCut}/{primaryModelCut}"
     if not os.path.exists(style_dir):
         os.makedirs(style_dir)
     for index, image in enumerate(result.images):
@@ -43,14 +44,14 @@ def checkPointMerger(primaryModel, secondaryModel, saveName):
                                       secondary_model_name=secondaryModel,
                                       tertiary_model_name=baseModel,
                                       interp_method="Add difference",
-                                      multiplier=1,
+                                      multiplier=0.9,
                                       save_as_half=False,
                                       custom_name=saveName,
                                       checkpoint_format="ckpt",
                                       config_source=0,
                                       bake_in_vae=None,
                                       discard_weights="")
-    print(result)
+    print(result.content)
 
 
 # Press the green button in the gutter to run the script.
@@ -65,10 +66,12 @@ if __name__ == '__main__':
     baseModel = [model for model in models if 'v1-5-pruned.ckpt' in model][0]
     femaleModels = [model for model in models if 'female' in model]
     maleModels = [model for model in models if 'male' in model]
+    #==========
     for mainModel in femaleModels:
         secondaryModel = 'style/cp_1366_elldrethsLucidMix_v10.safetensors'
         primaryModelCut = mainModel.split('/')[-1].split('.')[0]
         secondaryModelCut = secondaryModel.split('/')[-1].split('.')[0]
-        saveModelName = f"AutoMerge/{primaryModelCut}_{secondaryModelCut}"
+        saveModelName = f"AutoMerge/{primaryModelCut}/{primaryModelCut}_{secondaryModelCut}"
         checkPointMerger(mainModel, secondaryModel, saveModelName)
         generateImage(primaryModelCut, saveModelName, primaryModelCut, secondaryModelCut)
+    cus_api.deleteModel()
