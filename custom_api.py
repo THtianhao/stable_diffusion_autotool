@@ -1,3 +1,5 @@
+import time
+
 import requests
 
 import env
@@ -23,6 +25,7 @@ class CustomAPI:
                          ):
         url = f"{self.baseUrl}/checkpoint-merger"
         payload = {
+            "id_task": int(time.time()),
             "primary_model_name": primary_model_name,
             "secondary_model_name": secondary_model_name,
             "tertiary_model_name": tertiary_model_name,
@@ -36,4 +39,6 @@ class CustomAPI:
             "discard_weights": discard_weights
         }
         response = requests.Session().post(url=url, json=payload)
-        print(response)
+        if response.status_code != 200:
+            pass
+        return response
