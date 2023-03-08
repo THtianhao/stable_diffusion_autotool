@@ -101,10 +101,10 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Stable diffusion webui auto tool"))
-        self.saveConfig.setText(_translate("MainWindow", "保存配置"))
-        self.startTask.setText(_translate("MainWindow", "开始任务"))
-        self.label.setText(_translate("MainWindow", "服务器IP"))
-        self.label_3.setText(_translate("MainWindow", "端口号"))
-        self.fileConfig.setText(_translate("MainWindow", "配置文件路径"))
-        self.openTaskPath.setText(_translate("MainWindow", "浏览"))
+        self.saveConfig.setText(_translate("MainWindow", "Save Config"))
+        self.startTask.setText(_translate("MainWindow", "Start"))
+        self.label.setText(_translate("MainWindow", "host"))
+        self.label_3.setText(_translate("MainWindow", "port"))
+        self.fileConfig.setText(_translate("MainWindow", "Tasks File Path"))
+        self.openTaskPath.setText(_translate("MainWindow", "Select File"))
         self.label_2.setText(_translate("MainWindow", "Log"))

@@ -28,14 +28,14 @@
         <item>
          <widget class="QPushButton" name="saveConfig">
           <property name="text">
-           <string>保存配置</string>
+           <string>Save Config</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QPushButton" name="startTask">
           <property name="text">
-           <string>开始任务</string>
+           <string>Start</string>
           </property>
          </widget>
         </item>
@@ -51,7 +51,7 @@
           <item>
            <widget class="QLabel" name="label">
             <property name="text">
-             <string>服务器IP</string>
+             <string>host</string>
             </property>
            </widget>
           </item>
@@ -65,7 +65,7 @@
           <item>
            <widget class="QLabel" name="label_3">
             <property name="text">
-             <string>端口号</string>
+             <string>port</string>
             </property>
            </widget>
           </item>
@@ -79,7 +79,7 @@
           <item>
            <widget class="QLabel" name="fileConfig">
             <property name="text">
-             <string>配置文件路径</string>
+             <string>Tasks File Path</string>
             </property>
            </widget>
           </item>
@@ -89,7 +89,7 @@
           <item>
            <widget class="QToolButton" name="openTaskPath">
             <property name="text">
-             <string>浏览</string>
+             <string>Select File</string>
             </property>
            </widget>
           </item>
