@@ -82,7 +82,7 @@ class Ui_MainWindow(object):
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
         self.label_2.setObjectName("label_2")
         self.verticalLayout.addWidget(self.label_2)
-        self.logPanel = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.logPanel = QtWidgets.QTextBrowser(self.centralwidget)
         self.logPanel.setObjectName("logPanel")
         self.verticalLayout.addWidget(self.logPanel)
         self.horizontalLayout_5.addLayout(self.verticalLayout)

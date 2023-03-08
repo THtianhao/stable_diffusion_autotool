@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QMainWindow
 from PyQt5 import QtWidgets
 from bean.task_bean import TasksBean
 from config import *
+from log_utils import LogUtils
 from task_thread import TaskThread
 from ui.main import Ui_MainWindow
 
@@ -16,6 +17,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.openTaskPath.clicked.connect(self.open_task_path)
         self.startTask.clicked.connect(self.start_tasks)
         self.read_config()
+        self.log_utils = LogUtils('AutoTool', self)
 
     def save_config(self):
         self.config.host = self.host.text()
@@ -53,12 +55,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
                 return json.load(f)
         except Exception as e:
             print(e)
-
-    def click_start(self):
-        pass
-
-    def delete_dir(self):
-        pass
 
     def open_task_path(self):
         fileName, fileType = QtWidgets.QFileDialog.getOpenFileName(self, "选取文件夹", os.getcwd(),

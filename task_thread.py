@@ -4,6 +4,7 @@ from webuiapi import webuiapi
 from bean.task_bean import *
 from config import *
 from custom_api import CustomAPI
+from log_utils import LogUtils
 
 class TaskThread(QThread):
     printSignal = pyqtSignal(str)
@@ -14,10 +15,14 @@ class TaskThread(QThread):
         self.tasks: TasksBean = tasks
         self.cus_api = CustomAPI(host=config.host, port=config.port)
         self.webui_api = webuiapi.WebUIApi(host=config.host, port=config.port)
+        self.log_utils: LogUtils = ui.log_utils
         self.printSignal.connect(self.ui.print_log)
 
     def run(self) -> None:
-        for taskjson in self.tasks.tasks:
+        self.log_utils.sys(f"total task is  {len(self.tasks.tasks)}")
+        for index, taskjson in enumerate(self.tasks.tasks):
+            self.log_utils.separator()
+            self.log_utils.sys(f"start Tasks {index + 1} of {len(self.tasks.tasks)}")
             task = TaskBean()
             task.__dict__ = taskjson
             models = None
@@ -35,12 +40,17 @@ class TaskThread(QThread):
                 save_model_name = f"AutoMerge/{style_model_cut}_{human_model_cut}"
                 self.check_point_merger(human_model, style_model, base_model, save_model_name, task.task_merge)
                 self.generate_image(save_model_name, human_model_cut, style_model_cut, task.task_txt_img)
-            self.cus_api.delete_model()
+            self.log_utils.separator()
+            # try:
+            #     self.cus_api.delete_model()
+            # except Exception as e:
+            #     print(f"delete error {e}")
 
     def print_ui_log(self, log):
         self.printSignal.emit(log)
 
     def generate_image(self, model, primary_model_cut, secondary_model_cut, task_txt_img_json):
+        self.log_utils.sys("start txt2img")
         task_txt_img = TaskTxt2Img()
         task_txt_img.__dict__ = task_txt_img_json
         self.webui_api.util_set_model(model)
@@ -67,8 +77,10 @@ class TaskThread(QThread):
             os.makedirs(style_dir)
         for index, image in enumerate(result.images):
             image.save(f'{style_dir}/{primary_model_cut}_{secondary_model_cut}_{index}.jpg')
+        self.log_utils.i("end txt2img")
 
     def check_point_merger(self, primary_model, secondary_model, base_model, save_name, task_merge_json):
+        self.log_utils.i(f"start merge : {primary_model} + {secondary_model}")
         task_merge = TaskMerge()
         task_merge.__dict__ = task_merge_json
         result = self.cus_api.check_point_merge(primary_model_name=primary_model,
@@ -82,4 +94,4 @@ class TaskThread(QThread):
                                                 config_source=0,
                                                 bake_in_vae=None,
                                                 discard_weights="")
-        print(result.content)
+        self.log_utils.i(f"merge result {result.content}")
