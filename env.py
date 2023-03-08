@@ -1,5 +1,6 @@
 import os
 import platform
+import sys
 
 isWindows = False
 isMac = False
@@ -17,15 +18,20 @@ def getSavePath():
 
 cfgPath = None
 root = None
+log = None
 
 if isMac:
     root = "AutoTool"
     cfgPath = "config"
+    log = "log"
 globalRootPath = os.path.join(getSavePath(), root)
 globalCfgPath = os.path.join(globalRootPath, cfgPath)
+globalLogPath = os.path.join(globalRootPath, log)
 
 if not os.path.exists(globalCfgPath):
     os.makedirs(globalCfgPath)
+if not os.path.exists(globalLogPath):
+    os.makedirs(globalLogPath)
 
 def getConfigPath():
     return os.path.join(globalCfgPath, "cfg.json")

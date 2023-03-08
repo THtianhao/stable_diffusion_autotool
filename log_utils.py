@@ -4,6 +4,8 @@ from PyQt5.QtCore import QDateTime, pyqtSignal
 import datetime
 import logging.handlers
 
+import env
+
 class LogUtils:
 
     def __init__(self, tag, printer):
@@ -15,11 +17,7 @@ class LogUtils:
 
     def setLogger(self):
         self.logger.setLevel(logging.DEBUG)
-        # path = r'%s\riotlog\%s' % (get_desktop(), self.fileTag)
-        path = r'.\res\log\%s' % self.fileTag
-        if not os.path.exists(path):
-            os.makedirs(path)
-        logFileName = r'%s\%s_log.log' % (path, self.fileTag)
+        logFileName = os.path.join(env.globalLogPath, 'auto_tool.log')
         handler = logging.handlers.TimedRotatingFileHandler(logFileName, when='D', interval=1, encoding='utf-8', backupCount=7)
         handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
         self.logger.addHandler(handler)

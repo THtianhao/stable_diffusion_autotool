@@ -13,7 +13,6 @@ class CustomAPI:
         response = requests.Session().get(url=url)
         if response.status_code != 200:
             pass
-        print(f"delete result = {response.content}")
         return response
 
     def check_point_merge(self,

@@ -57,7 +57,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             with open(self.config.task_path) as f:
                 return json.load(f)
         except Exception as e:
-            print(e)
+            pass
 
     def open_task_path(self):
         fileName, fileType = QtWidgets.QFileDialog.getOpenFileName(self, "选取文件夹", os.getcwd(),

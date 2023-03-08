@@ -12,7 +12,7 @@ def write_config(config):
         with open(env.getConfigPath(), 'w') as writeFile:
             json.dump(config, writeFile)
     except Exception as e:
-        print("json保存错误!" + str(e))
+        pass
 
 def read_config() -> ConfigBean:
     if not os.path.exists(env.getConfigPath()):
@@ -28,4 +28,4 @@ def read_config() -> ConfigBean:
             bean.task_path = config.get('task_path')
             return bean
     except Exception as e:
-        print(e)
+        pass
