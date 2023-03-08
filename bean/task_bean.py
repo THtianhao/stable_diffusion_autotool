@@ -7,6 +7,7 @@ class TaskBean:
         self.human_model_dir_flag = ""
         self.style_model = ""
         self.base_model_flag = ""
+        self.delete_models_when_complete = False
         self.task_merge: TaskMerge = TaskMerge()
         self.task_txt_img: TaskTxt2Img = TaskTxt2Img()
 

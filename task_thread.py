@@ -31,20 +31,26 @@ class TaskThread(QThread):
             except Exception as e:
                 self.print_ui_log(f"connect server error : {e}")
                 return
-            base_model = [model for model in models if task.base_model_flag in model][0]
+            base_models = [model for model in models if task.base_model_flag in model]
+            if len(base_models) == 0:
+                self.log_utils.e("can not find base models")
+                return
+            base_model = base_models[0]
             human_models = [model for model in models if task.human_model_dir_flag in model.split('/')]
+            if len(human_models) == 0:
+                self.log_utils.e("can not find human models")
+                return
             for human_model in human_models:
                 style_model = task.style_model
                 human_model_cut = human_model.split('/')[-1].split('.')[0]
                 style_model_cut = style_model.split('/')[-1].split('.')[0]
-                save_model_name = f"AutoMerge/{style_model_cut}_{human_model_cut}"
+                save_model_name = f"AutoTool/{style_model_cut}/{style_model_cut}_{human_model_cut}"
                 self.check_point_merger(human_model, style_model, base_model, save_model_name, task.task_merge)
                 self.generate_image(save_model_name, human_model_cut, style_model_cut, task.task_txt_img)
+            deleteResult = self.cus_api.delete_model()
+            self.log_utils.i(f"delete result = {deleteResult.content}")
             self.log_utils.separator()
-            # try:
-            #     self.cus_api.delete_model()
-            # except Exception as e:
-            #     print(f"delete error {e}")
+
 
     def print_ui_log(self, log):
         self.printSignal.emit(log)

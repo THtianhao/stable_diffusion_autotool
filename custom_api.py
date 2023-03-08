@@ -2,7 +2,6 @@ import time
 
 import requests
 
-import env
 
 class CustomAPI:
 
@@ -14,18 +13,18 @@ class CustomAPI:
         response = requests.Session().get(url=url)
         if response.status_code != 200:
             pass
-        print(response)
+        print(f"delete result = {response.content}")
         return response
 
     def check_point_merge(self,
                           primary_model_name="",
                           secondary_model_name="",
                           tertiary_model_name="",
-                          interp_method="",
-                          multiplier=0,
+                          interp_method="Add difference",
+                          multiplier=1,
                           save_as_half=False,
                           custom_name="",
-                          checkpoint_format="",
+                          checkpoint_format="ckpt",
                           config_source=0,
                           bake_in_vae=None,
                           discard_weights=""
@@ -46,6 +45,4 @@ class CustomAPI:
             "discard_weights": discard_weights
         }
         response = requests.Session().post(url=url, json=payload)
-        if response.status_code != 200:
-            pass
         return response

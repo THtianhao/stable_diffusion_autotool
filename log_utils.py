@@ -1,14 +1,13 @@
 import os.path
 import time
-from PyQt5.QtCore import QDateTime
+from PyQt5.QtCore import QDateTime, pyqtSignal
 import datetime
 import logging.handlers
-
 
 class LogUtils:
 
     def __init__(self, tag, printer):
-        self.printer = printer
+        self.printSignal = printer
         self.logger = logging.getLogger("%s_log" % tag)
         self.fileTag = tag
         self.time = datetime.time(7, 0, 0)
@@ -28,22 +27,22 @@ class LogUtils:
     def i(self, log: str):
         self.logger.info(log)
         log = "%s<font size=3 color=black> %s </font>" % (QDateTime.currentDateTime().toString("[hh:mm:ss]"), log)
-        self.printer.print_log(log)
+        self.print_log(log)
 
     def w(self, log: str):
         self.logger.warning(log)
         log = "%s<font color=orange> %s </font>" % (QDateTime.currentDateTime().toString("[hh:mm:ss]"), log)
-        self.printer.print_log(log)
+        self.print_log(log)
 
     def e(self, log: str):
         self.logger.error(log)
         log = "%s<font color=red> %s </font>" % (QDateTime.currentDateTime().toString("[hh:mm:ss]"), log)
-        self.printer.print_log(log)
+        self.print_log(log)
 
     def sys(self, log: str):
         self.logger.info(log)
         log = "%s<font color=DarkBlue> %s </font>" % (QDateTime.currentDateTime().toString("[hh:mm:ss]"), log)
-        self.printer.print_log(log)
+        self.print_log(log)
 
     def separator(self):
         self.i("------------------------------------------")
@@ -58,3 +57,6 @@ class LogUtils:
             message = "等待%d秒" % delayTime
         self.i(message)
         time.sleep(delayTime)
+
+    def print_log(self, log):
+        self.printSignal.emit(log)

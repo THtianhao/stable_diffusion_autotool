@@ -1,3 +1,4 @@
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5 import QtWidgets
 from bean.task_bean import TasksBean
@@ -7,6 +8,7 @@ from task_thread import TaskThread
 from ui.main import Ui_MainWindow
 
 class MainWindow(Ui_MainWindow, QMainWindow):
+    printSignal = pyqtSignal(str)
 
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -17,7 +19,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.openTaskPath.clicked.connect(self.open_task_path)
         self.startTask.clicked.connect(self.start_tasks)
         self.read_config()
-        self.log_utils = LogUtils('AutoTool', self)
+        self.printSignal.connect(self.print_log)
+        self.log_utils = LogUtils('AutoTool', self.printSignal)
 
     def save_config(self):
         self.config.host = self.host.text()
