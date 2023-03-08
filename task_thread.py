@@ -50,6 +50,7 @@ class TaskThread(QThread):
             deleteResult = self.cus_api.delete_model()
             self.log_utils.i(f"delete result = {deleteResult.content}")
             self.log_utils.separator()
+        self.log_utils.sys("====All Task complete====")
 
 
     def print_ui_log(self, log):
@@ -83,7 +84,7 @@ class TaskThread(QThread):
             os.makedirs(style_dir)
         for index, image in enumerate(result.images):
             image.save(f'{style_dir}/{primary_model_cut}_{secondary_model_cut}_{index}.jpg')
-        self.log_utils.i("end txt2img")
+        self.log_utils.sys("end txt2img")
 
     def check_point_merger(self, primary_model, secondary_model, base_model, save_name, task_merge_json):
         self.log_utils.i(f"start merge : {primary_model} + {secondary_model}")
