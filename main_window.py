@@ -1,3 +1,5 @@
+import traceback
+
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5 import QtWidgets
@@ -12,15 +14,19 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def __init__(self):
         super(MainWindow, self).__init__()
-        self.setupUi(self)
-        self.config: ConfigBean = ConfigBean()
-        self.file_tag = "chrome_config"
-        self.saveConfig.clicked.connect(self.save_config)
-        self.openTaskPath.clicked.connect(self.open_task_path)
-        self.startTask.clicked.connect(self.start_tasks)
-        self.read_config()
-        self.printSignal.connect(self.print_log)
-        self.log_utils = LogUtils('AutoTool', self.printSignal)
+        try:
+            self.setupUi(self)
+            self.thread = None
+            self.config: ConfigBean = ConfigBean()
+            self.file_tag = "chrome_config"
+            self.saveConfig.clicked.connect(self.save_config)
+            self.openTaskPath.clicked.connect(self.open_task_path)
+            self.startTask.clicked.connect(self.start_tasks)
+            self.log_utils = LogUtils('AutoTool', self.printSignal)
+            self.read_config()
+            self.printSignal.connect(self.print_log)
+        except Exception as e:
+            self.log_utils.e(traceback.format_exc())
 
     def save_config(self):
         self.config.host = self.host.text()
@@ -30,20 +36,28 @@ class MainWindow(Ui_MainWindow, QMainWindow):
 
     def read_config(self):
         self.config = read_config()
-        if self.config == '':
+        if self.config is None:
             return
         self.host.setText('' if self.config.host is None else self.config.host)
         self.port.setText('' if self.config.port is None else self.config.port)
         self.taskPath.setText('' if self.config.task_path is None else self.config.task_path)
 
     def start_tasks(self):
-        tasks = self.read_task()
-        if tasks == '':
+        self.save_config()
+        if self.config.task_path is None or self.config.host is None or self.config.port is None:
+            self.log_utils.e("Please configuration the host:port and tasks first")
             return
-        tasks_bean = TasksBean()
-        tasks_bean.__dict__ = tasks
-        thread = TaskThread(self, tasks_bean, self.config)
-        thread.start()
+        try:
+            tasks = self.read_task()
+            if tasks == '':
+                return
+            tasks_bean = TasksBean()
+            tasks_bean.__dict__ = tasks
+            self.thread = TaskThread(self, tasks_bean, self.config)
+            print("ready to start")
+            self.thread.start()
+        except:
+            self.log_utils.e(traceback.format_exc())
 
     def print_log(self, log):
         self.logPanel.append(log)

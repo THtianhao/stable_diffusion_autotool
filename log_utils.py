@@ -57,4 +57,5 @@ class LogUtils:
         time.sleep(delayTime)
 
     def print_log(self, log):
+        print(log)
         self.printSignal.emit(log)
