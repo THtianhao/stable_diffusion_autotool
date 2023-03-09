@@ -16,12 +16,14 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         super(MainWindow, self).__init__()
         try:
             self.setupUi(self)
-            self.thread = None
+            self.thread: TaskThread= None
             self.config: ConfigBean = ConfigBean()
             self.file_tag = "chrome_config"
             self.saveConfig.clicked.connect(self.save_config)
             self.openTaskPath.clicked.connect(self.open_task_path)
             self.startTask.clicked.connect(self.start_tasks)
+            self.stopTask.clicked.connect(self.stop_tasks)
+            self.deleteModels.clicked.connect(self.delete_models)
             self.log_utils = LogUtils('AutoTool', self.printSignal)
             self.read_config()
             self.printSignal.connect(self.print_log)
@@ -40,11 +42,11 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.port.setText('' if self.config.port is None else self.config.port)
         self.taskPath.setText('' if self.config.task_path is None else self.config.task_path)
 
-    def checkConfig(self)-> bool:
+    def checkConfig(self) -> bool:
         self.config.host = self.host.text()
         self.config.port = self.port.text()
         self.config.task_path = self.taskPath.text()
-        if self.config.task_path is None or self.config.host is None or self.config.port is None\
+        if self.config.task_path is None or self.config.host is None or self.config.port is None \
                 or self.config.task_path == '' or self.config.host == '' or self.config.port == '':
             self.log_utils.e("Please configuration the host port and tasks first")
             return False
@@ -65,6 +67,12 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.thread.start()
         except:
             self.log_utils.e(traceback.format_exc())
+
+    def stop_tasks(self):
+        if self.thread is None:
+            self.log_utils.e("No task running")
+        self.thread.stop()
+
 
     def print_log(self, log):
         self.logPanel.append(log)

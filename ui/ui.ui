@@ -39,10 +39,17 @@
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QPushButton" name="stopTask">
+          <property name="text">
+           <string>Stop</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0">
+       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0,0">
         <property name="spacing">
          <number>0</number>
         </property>
@@ -94,6 +101,13 @@
            </widget>
           </item>
          </layout>
+        </item>
+        <item>
+         <widget class="QPushButton" name="deleteModels">
+          <property name="text">
+           <string>Delete Auto Merger Models</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>

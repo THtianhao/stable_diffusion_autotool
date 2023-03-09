@@ -13,6 +13,7 @@ class TaskThread(QThread):
 
     def __init__(self, ui, tasks: TasksBean, config):
         super().__init__()
+        self.should_stop = False
         print("init")
         self.ui = ui
         self.tasks: TasksBean = tasks
@@ -30,7 +31,6 @@ class TaskThread(QThread):
                 self.log_utils.sys(f"start Tasks {index + 1} of {len(self.tasks.tasks)}")
                 task = TaskBean()
                 task.__dict__ = taskjson
-                models = None
                 try:
                     models = self.webui_api.util_get_model_names()
                 except Exception as e:
@@ -51,17 +51,30 @@ class TaskThread(QThread):
                     style_model_cut = style_model.split('/')[-1].split('.')[0]
                     save_model_name = f"AutoTool/{style_model_cut}/{style_model_cut}_{human_model_cut}"
                     self.check_point_merger(human_model, style_model, base_model, save_model_name, task.task_merge)
+                    if self.__check_need_stop(): return
                     self.generate_image(save_model_name, human_model_cut, style_model_cut, task.task_txt_img)
-                deleteResult = self.cus_api.delete_model()
-                self.log_utils.i(f"delete result = {deleteResult.content}")
+                    if self.__check_need_stop(): return
                 self.log_utils.separator()
+                self.__delete_all_models()
             self.log_utils.sys("====All Task complete====")
         except:
             self.log_utils.e(traceback.format_exc())
 
+    def stop(self):
+        self.should_stop = True
+        self.log_utils.sys("Waiting for stop tasks...")
 
-    def print_ui_log(self, log):
-        self.printSignal.emit(log)
+    def __check_need_stop(self) -> bool:
+        if self.should_stop:
+            self.log_utils.sys("tasks stopped")
+            self.__delete_all_models()
+            return True
+        return False
+
+    def __delete_all_models(self):
+        self.log_utils.i("delete all merge models")
+        deleteResult = self.cus_api.delete_model()
+        self.log_utils.i(f"delete result = {deleteResult.content}")
 
     def generate_image(self, model, primary_model_cut, secondary_model_cut, task_txt_img_json):
         self.log_utils.sys("start txt2img")
