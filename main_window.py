@@ -29,9 +29,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.log_utils.e(traceback.format_exc())
 
     def save_config(self):
-        self.config.host = self.host.text()
-        self.config.port = self.port.text()
-        self.config.task_path = self.taskPath.text()
+
         write_config(self.config.__dict__)
 
     def read_config(self):
@@ -42,11 +40,20 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.port.setText('' if self.config.port is None else self.config.port)
         self.taskPath.setText('' if self.config.task_path is None else self.config.task_path)
 
+    def checkConfig(self)-> bool:
+        self.config.host = self.host.text()
+        self.config.port = self.port.text()
+        self.config.task_path = self.taskPath.text()
+        if self.config.task_path is None or self.config.host is None or self.config.port is None\
+                or self.config.task_path == '' or self.config.host == '' or self.config.port == '':
+            self.log_utils.e("Please configuration the host port and tasks first")
+            return False
+        return True
+
     def start_tasks(self):
-        self.save_config()
-        if self.config.task_path is None or self.config.host is None or self.config.port is None:
-            self.log_utils.e("Please configuration the host:port and tasks first")
+        if not self.checkConfig():
             return
+        self.save_config()
         try:
             tasks = self.read_task()
             if tasks == '':
