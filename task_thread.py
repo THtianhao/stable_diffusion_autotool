@@ -54,8 +54,9 @@ class TaskThread(QThread):
                     if self.__check_need_stop(): return
                     self.generate_image(save_model_name, human_model_cut, style_model_cut, task.task_txt_img)
                     if self.__check_need_stop(): return
+                    if task.delete_after_merge:
+                        self.__delete_models(style_model_cut)
                 self.log_utils.separator()
-                self.__delete_all_models()
             self.log_utils.sys("====All Task complete====")
         except:
             self.log_utils.e(traceback.format_exc())
@@ -66,8 +67,8 @@ class TaskThread(QThread):
 
     def __check_need_stop(self) -> bool:
         if self.should_stop:
-            self.log_utils.sys("tasks stopped")
             self.__delete_all_models()
+            self.log_utils.sys("All tasks stopped")
             return True
         return False
 
@@ -76,14 +77,21 @@ class TaskThread(QThread):
         deleteResult = self.cus_api.delete_model()
         self.log_utils.i(f"delete result = {deleteResult.content}")
 
+    def __delete_models(self, path):
+        self.log_utils.i(f"delete  models {path}")
+        deleteResult = self.cus_api.delete_model(path)
+        self.log_utils.i(f"delete result = {deleteResult.content}")
+
     def generate_image(self, model, primary_model_cut, secondary_model_cut, task_txt_img_json):
         self.log_utils.sys("start txt2img")
         task_txt_img = TaskTxt2Img()
         task_txt_img.__dict__ = task_txt_img_json
         self.webui_api.util_set_model(model)
         self.webui_api.util_wait_for_ready()
+        prompt = f"({primary_model_cut}:{task_txt_img.human_weight}),{task_txt_img.prompt}"
+        self.log_utils.sys(f'prompt = {prompt}')
         result = self.webui_api.txt2img(
-            prompt=f"({primary_model_cut}),{task_txt_img.prompt}",
+            prompt=prompt,
             negative_prompt=f"{task_txt_img.negative_prompt}",
             seed=task_txt_img.seed,
             styles=["anime"],

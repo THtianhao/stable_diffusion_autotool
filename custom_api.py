@@ -2,15 +2,15 @@ import time
 
 import requests
 
-
 class CustomAPI:
 
     def __init__(self, host, port):
         self.baseUrl = f"http://{host}:{port}/sdapi/v1"
 
-    def delete_model(self):
+    def delete_model(self, path=''):
         url = f"{self.baseUrl}/delete_models"
-        response = requests.Session().get(url=url)
+        json = {'path': path}
+        response = requests.Session().post(url=url, json=json)
         if response.status_code != 200:
             pass
         return response

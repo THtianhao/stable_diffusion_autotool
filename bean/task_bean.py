@@ -7,6 +7,7 @@ class TaskBean:
         self.human_model_dir_flag = ""
         self.style_model = ""
         self.base_model_flag = ""
+        self.delete_after_merge = True
         self.delete_models_when_complete = False
         self.task_merge: TaskMerge = TaskMerge()
         self.task_txt_img: TaskTxt2Img = TaskTxt2Img()
@@ -21,6 +22,7 @@ class TaskTxt2Img:
     def __init__(self):
         self.prompt = "",
         self.negative_prompt = "",
+        self.human_weight = 1,
         self.seed = -1,
         self.cfg_scale = 7,
         self.sampler_index = 'DPM++ 2S a Karras',
