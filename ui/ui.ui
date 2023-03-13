@@ -175,12 +175,12 @@
           <item>
            <widget class="QLabel" name="label_4">
             <property name="text">
-             <string>飞书授权</string>
+             <string>飞书授权码</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="lineEdit">
+           <widget class="QLineEdit" name="feishuCode">
             <property name="inputMask">
              <string/>
             </property>
@@ -192,12 +192,12 @@
           <item>
            <widget class="QPushButton" name="getFeishuCode">
             <property name="text">
-             <string>获取code</string>
+             <string>获取授权码</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="authorCodeButton">
+           <widget class="QPushButton" name="feishuAuthor">
             <property name="text">
              <string>授权</string>
             </property>

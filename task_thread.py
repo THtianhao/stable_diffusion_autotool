@@ -5,6 +5,7 @@ import traceback
 from PyQt5.QtCore import QThread, pyqtSignal
 from webuiapi import webuiapi
 
+from api.feishu_api import FeishuApi
 from bean.task_bean import *
 from config import *
 from api.custom_api import CustomAPI
@@ -23,11 +24,15 @@ class TaskThread(QThread):
         self.cus_api = CustomAPI(host=config.host, port=config.port)
         self.webui_api = webuiapi.WebUIApi(host=config.host, port=config.port)
         self.log_utils: LogUtils = ui.log_utils
+        self.feishu_api = FeishuApi(self.log_utils)
         self.printSignal.connect(self.ui.print_log)
         print("init finished")
 
     def run(self) -> None:
         try:
+            if self.config.upload_feishu == 1:
+                if not self.check_feishu():
+                    return
             self.log_utils.sys(f"total task is  {len(self.tasks.tasks)}")
             for index, taskjson in enumerate(self.tasks.tasks):
                 self.log_utils.separator()
@@ -71,6 +76,26 @@ class TaskThread(QThread):
             self.log_utils.sys("====All Task complete====")
         except:
             self.log_utils.e(traceback.format_exc())
+
+    def check_feishu(self):
+
+        response = self.feishu_api.getToken('cli_a483ea8b94e3100e', 'UhJeWk7YxAgzhbc6mOz6xh7Gkfwu6eGS')
+        if response is not None:
+            if self.config.refresh_token is not None and len(self.config.refresh_token) != 0:
+                refreshResult = self.feishu_api.refresh_user_access_token(self.config.refresh_token)
+                if refreshResult is not None:
+                    self.config.refresh_token = refreshResult.refresh_token
+                    write_config(self.config.__dict__)
+                    return True
+            else:
+                userResult = self.feishu_api.getUserToken(self.config.feishu_code)
+                if userResult is not None:
+                    self.config.refresh_token = userResult.refresh_token
+                    write_config(self.config.__dict__)
+                    return True
+        else:
+            self.log_utils.e("access token error")
+        return False
 
     def stop(self):
         self.should_stop = True

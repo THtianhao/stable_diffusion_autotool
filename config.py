@@ -18,15 +18,16 @@ def read_config() -> ConfigBean:
     if not os.path.exists(env.getConfigPath()):
         with codecs.open(env.getConfigPath(), 'a+', encoding='utf-8') as f:
             f.write("{}")
-            return
+            return ConfigBean()
     try:
         with open(env.getConfigPath()) as f:
             config = json.load(f)
-            bean = ConfigBean()
-            bean.host = config.get('host')
-            bean.port = config.get('port')
-            bean.task_path = config.get('task_path')
-            return bean
+            if config is None:
+                os.remove(env.getConfigPath())
+                read_config()
+            else:
+                bean = ConfigBean(**config)
+                return bean
     except Exception as e:
         os.remove(env.getConfigPath())
         read_config()
