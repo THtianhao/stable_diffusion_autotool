@@ -1,6 +1,9 @@
+from dataclasses import dataclass
+
+@dataclass
 class TokenResponse:
-    def __init__(self):
-        self.code = 0
-        self.msg = ""
-        self.tenant_access_token = ""
-        self.expire = 0
+    code: int
+    msg: str
+    tenant_access_token: str
+    expire: int
+

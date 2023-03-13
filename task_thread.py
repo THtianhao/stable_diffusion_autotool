@@ -15,6 +15,7 @@ class TaskThread(QThread):
 
     def __init__(self, ui, tasks: TasksBean, config):
         super().__init__()
+        self.config: ConfigBean = config
         self.should_stop = False
         print("init")
         self.ui = ui
@@ -54,13 +55,18 @@ class TaskThread(QThread):
                     style_model_cut = style_model.split('/')[-1].split('.')[0]
                     save_model_name = f"AutoTool/{style_model_cut}/{style_model_cut}_{human_model_cut}"
                     filter_model = [model for model in models if f"{save_model_name}.ckpt" in model]
+                    style = [model for model in models if style_model in model][0]
                     if len(filter_model) == 0:
-                        self.check_point_merger(human_model, style_model, base_model, save_model_name, task.task_merge)
+                        self.check_point_merger(human_model, style, base_model, save_model_name, task.task_merge)
+                        if self.__check_need_stop():
+                            return
+                    else:
+                        self.log_utils.e(f"{save_model_name}.ckpt already have")
+                    if self.config.operation == 2:
+                        self.generate_image(save_model_name, human_model_cut, style_model_cut, task.task_txt_img)
                         if self.__check_need_stop(): return
-                    self.generate_image(save_model_name, human_model_cut, style_model_cut, task.task_txt_img)
-                    if self.__check_need_stop(): return
-                    if task.delete_after_merge:
-                        self.__delete_models(style_model_cut)
+                        if task.delete_after_merge:
+                            self.__delete_models(style_model_cut)
                 self.log_utils.separator()
             self.log_utils.sys("====All Task complete====")
         except:

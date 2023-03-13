@@ -1,8 +1,11 @@
 import traceback
 
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSignal, QUrl
+from PyQt5.QtGui import QDesktopServices
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5 import QtWidgets
+
+from api.feishu_api import *
 from bean.task_bean import TasksBean
 from config import *
 from log_utils import LogUtils
@@ -23,6 +26,8 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.openTaskPath.clicked.connect(self.open_task_path)
             self.startTask.clicked.connect(self.start_tasks)
             self.stopTask.clicked.connect(self.stop_tasks)
+            self.getFeishuCode.clicked.connect(self.feishu_code)
+            self.authorCodeButton.clicked.connect(self.author_code)
             self.log_utils = LogUtils('AutoTool', self.printSignal)
             self.read_config()
             self.printSignal.connect(self.print_log)
@@ -30,7 +35,6 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.log_utils.e(traceback.format_exc())
 
     def save_config(self):
-
         write_config(self.config.__dict__)
 
     def read_config(self):
@@ -41,7 +45,15 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.port.setText('' if self.config.port is None else self.config.port)
         self.taskPath.setText('' if self.config.task_path is None else self.config.task_path)
 
+    def feishu_code(self):
+        QDesktopServices.openUrl(QUrl(getPreCodeUrl()))
+
+    def author_code(self):
+        getUserToken()
+
     def checkConfig(self) -> bool:
+        self.config.operation = 2 if self.mergeAndT2I.isChecked() else 1
+        self.config.upload_feishu = 1 if self.uploadFeishu.isChecked() else 0
         self.config.host = self.host.text()
         self.config.port = self.port.text()
         self.config.task_path = self.taskPath.text()
