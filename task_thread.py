@@ -1,3 +1,5 @@
+import os
+import shutil
 import traceback
 
 from PyQt5.QtCore import QThread, pyqtSignal
@@ -5,7 +7,7 @@ from webuiapi import webuiapi
 
 from bean.task_bean import *
 from config import *
-from custom_api import CustomAPI
+from api.custom_api import CustomAPI
 from log_utils import LogUtils
 
 class TaskThread(QThread):
@@ -31,6 +33,7 @@ class TaskThread(QThread):
                 self.log_utils.sys(f"start Tasks {index + 1} of {len(self.tasks.tasks)}")
                 task = TaskBean()
                 task.__dict__ = taskjson
+                models = None
                 try:
                     models = self.webui_api.util_get_model_names()
                 except Exception as e:
@@ -50,8 +53,10 @@ class TaskThread(QThread):
                     human_model_cut = human_model.split('/')[-1].split('.')[0]
                     style_model_cut = style_model.split('/')[-1].split('.')[0]
                     save_model_name = f"AutoTool/{style_model_cut}/{style_model_cut}_{human_model_cut}"
-                    self.check_point_merger(human_model, style_model, base_model, save_model_name, task.task_merge)
-                    if self.__check_need_stop(): return
+                    filter_model = [model for model in models if f"{save_model_name}.ckpt" in model]
+                    if len(filter_model) == 0:
+                        self.check_point_merger(human_model, style_model, base_model, save_model_name, task.task_merge)
+                        if self.__check_need_stop(): return
                     self.generate_image(save_model_name, human_model_cut, style_model_cut, task.task_txt_img)
                     if self.__check_need_stop(): return
                     if task.delete_after_merge:
@@ -67,7 +72,6 @@ class TaskThread(QThread):
 
     def __check_need_stop(self) -> bool:
         if self.should_stop:
-            self.__delete_all_models()
             self.log_utils.sys("All tasks stopped")
             return True
         return False
@@ -108,6 +112,8 @@ class TaskThread(QThread):
             # denoising_strength=0.4,
         )
         style_dir = f"{env.globalRootPath}/{secondary_model_cut}/{primary_model_cut}"
+        if os.path.exists(style_dir):
+            shutil.rmtree(style_dir)
         if not os.path.exists(style_dir):
             os.makedirs(style_dir)
         for index, image in enumerate(result.images):

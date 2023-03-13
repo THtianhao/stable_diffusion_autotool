@@ -1,6 +1,6 @@
 from webuiapi import webuiapi
 
-from custom_api import CustomAPI
+from api.custom_api import CustomAPI
 
 def delete_api(path):
     cus_api.delete_model(path)
