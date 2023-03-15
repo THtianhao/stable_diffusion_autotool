@@ -19,6 +19,18 @@ class FeishuApi:
         self.tenant_access_token = ""
         self.user_access_token = ""
         self.session = requests.session()
+        self.upload = False
+        self.session_success = False
+
+    def set_upload(self, upload):
+        self.upload = upload
+
+    def can_upload(self) -> bool:
+        if not self.upload:
+            return False
+        if not self.session_success:
+            return False
+        return True
 
     def getToken(self, app_id, app_secret):
         payload = {"app_id": app_id, "app_secret": app_secret}
@@ -56,6 +68,7 @@ class FeishuApi:
             if dict['code'] == 0:
                 bean = UserResponseData(**dict['data'])
                 self.user_access_token = bean.access_token
+                self.session_success = True
                 return bean
 
     def refresh_user_access_token(self, user_refresh_token):
@@ -69,6 +82,7 @@ class FeishuApi:
             if dict['code'] == 0:
                 bean = UserResponseData(**dict['data'])
                 self.user_access_token = bean.access_token
+                self.session_success = True
                 return bean
 
     def get_root_token(self):

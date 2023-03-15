@@ -25,6 +25,7 @@ class TaskThread(QThread):
         self.webui_api = webuiapi.WebUIApi(host=config.host, port=config.port)
         self.log_utils: LogUtils = ui.log_utils
         self.feishu_api = FeishuApi()
+        self.feishu_api.set_upload(self.config.upload_feishu == 1)
         self.printSignal.connect(self.ui.print_log)
         self.result = ResultBean()
         print("init finished")
@@ -183,7 +184,7 @@ class TaskThread(QThread):
                     write_config(self.config.__dict__)
                     return True
         else:
-            self.log_utils.e("access token error")
+            self.log_utils.e("access token get error")
         return False
 
     def stop(self):
