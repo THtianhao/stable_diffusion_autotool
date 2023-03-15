@@ -35,6 +35,7 @@ class MainWindow(Ui_MainWindow, QMainWindow):
             self.log_utils.e(traceback.format_exc())
 
     def save_config(self):
+        self.checkConfig()
         write_config(self.config.__dict__)
 
     def read_config(self):
@@ -45,25 +46,27 @@ class MainWindow(Ui_MainWindow, QMainWindow):
         self.port.setText('' if self.config.port is None else self.config.port)
         self.feishuCode.setText('' if self.config.feishu_code is None else self.config.feishu_code)
         self.taskPath.setText('' if self.config.task_path is None else self.config.task_path)
+        self.atEmail.setText('' if self.config.at_email is None else self.config.at_email)
         if self.config.upload_feishu is not None and self.config.upload_feishu == 1:
             self.uploadFeishu.setChecked(True)
         else:
             self.uploadFeishuNot.setChecked(True)
-        if self.config.operation is not None and self.config.operation == 2:
-            self.merge.setChecked(True)
-        else:
+        if self.config.operation is not None and self.config.operation == 1:
             self.mergeAndT2I.setChecked(True)
+        else:
+            self.merge.setChecked(True)
 
     def feishu_code(self):
         QDesktopServices.openUrl(QUrl("https://open.feishu.cn/open-apis/authen/v1/index?app_id=cli_a483ea8b94e3100e&redirect_uri=http://127.0.0.1"))
 
     def checkConfig(self) -> bool:
-        self.config.operation = 2 if self.mergeAndT2I.isChecked() else 1
+        self.config.operation = 1 if self.mergeAndT2I.isChecked() else 2
         self.config.upload_feishu = 1 if self.uploadFeishu.isChecked() else 0
         self.config.host = self.host.text()
         self.config.port = self.port.text()
         self.config.feishu_code = self.feishuCode.text()
         self.config.task_path = self.taskPath.text()
+        self.config.at_email = self.atEmail.text()
         if self.config.task_path is None or self.config.host is None or self.config.port is None \
                 or self.config.task_path == '' or self.config.host == '' or self.config.port == '':
             self.log_utils.e("Please configuration the host port and tasks first")

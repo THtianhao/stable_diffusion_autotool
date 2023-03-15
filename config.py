@@ -12,7 +12,7 @@ def write_config(config):
         with open(env.getConfigPath(), 'w') as writeFile:
             json.dump(config, writeFile)
     except Exception as e:
-        pass
+        print(e)
 
 def read_config() -> ConfigBean:
     if not os.path.exists(env.getConfigPath()):
