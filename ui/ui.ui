@@ -196,13 +196,6 @@
             </property>
            </widget>
           </item>
-          <item>
-           <widget class="QPushButton" name="feishuAuthor">
-            <property name="text">
-             <string>授权</string>
-            </property>
-           </widget>
-          </item>
          </layout>
         </item>
         <item>
@@ -267,7 +260,7 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroup_2"/>
   <buttongroup name="buttonGroup"/>
+  <buttongroup name="buttonGroup_2"/>
  </buttongroups>
 </ui>

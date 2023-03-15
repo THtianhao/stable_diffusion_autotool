@@ -183,8 +183,7 @@ class TaskThread(QThread):
                     self.config.refresh_token = userResult.refresh_token
                     write_config(self.config.__dict__)
                     return True
-        else:
-            self.log_utils.e("access token get error")
+        self.log_utils.e("feishu code 已过期")
         return False
 
     def stop(self):
