@@ -183,6 +183,8 @@ class TaskThread(QThread):
                     self.config.refresh_token = userResult.refresh_token
                     write_config(self.config.__dict__)
                     return True
+        self.config.refresh_token = ''
+        write_config(self.config.__dict__)
         self.log_utils.e("feishu code 已过期")
         return False
 
